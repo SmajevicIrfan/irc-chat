@@ -1,0 +1,64 @@
+extends layout
+
+block additional
+
+block content
+  #overlay
+    #username-prompt
+      form(action="")
+        p#usernameSet(style="display: none")= usernameSet
+        h4 Tell us what you want to be called
+        input(id="username", autocomplete="off", placeholder="Username")
+        button Set
+
+  ul#messages
+  
+  form#input(action="")
+    input(id="message", autocomplete="off", placeholder="Enter your message...")
+    button#send <i class="fa fa-paper-plane" aria-hidden="true"></i>
+    
+  script(src="https://code.jquery.com/jquery-3.1.1.min.js", integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=", crossorigin="anonymous")
+  script.
+    if ($('#usernameSet').value == 'true') {
+      $('#overlay').style.display = none;
+      $('#message').focus();
+    }
+    else
+      $('#username').focus();
+  
+    var socket = io();
+    
+    $('#username-prompt form').submit(function(e) {
+      e.preventDefault();
+      
+      var username = document.getElementById('username').value
+      if (username !== '') {
+        socket.emit('joined', username);
+        $('#overlay').hide();
+        $('#message').focus();
+        $('#usernameSet').value = 'true';
+        
+        return false;
+      }
+    });
+    
+    $('#input').submit(function(e) {
+    //document.getElementById('input').on('submit', function(e) {
+      e.preventDefault();
+      
+      console.log(document.getElementById('message').value);
+      socket.emit('message-sent', document.getElementById('message').value);
+      document.getElementById('message').value = '';
+      
+      return false;
+    });
+    
+    socket.on('message-received', function(user, msg) {
+      $('#messages').append($('<li>').text('[' + user + ']: ' + msg));
+      //document.getElementById('messages').innerHTML += '<li>' + msg + '</li>';
+    });
+    
+    socket.on('update', function(update) {
+      $('#messages').append($('<li>').text(update));
+      //document.getElementById('messages').innerHTML += '<li>User disconnected</li>';
+    });

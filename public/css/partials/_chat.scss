@@ -1,0 +1,56 @@
+#input {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+
+  padding: 20px 30px;
+
+  background-color: $silver;
+
+  input {
+    width: 90%;
+
+    font-size: 20px;
+
+    background-color: transparent;
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+#send {
+  float: right;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  color: rgba($white, 0.95);
+
+  background-color: $primary-color;
+  border: none;
+  border-radius: 50%;
+
+  i {
+    position: relative;
+    top: -0.25em;
+  }
+}
+
+#messages {
+  margin: 0;
+  padding: 0;
+
+  list-style-type: none;
+}
+
+#messages li {
+  padding: 5px 10px;
+}
+
+#messages li:nth-child(odd) {
+  background: #eee;
+}
