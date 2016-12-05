@@ -46,21 +46,32 @@ block content
     //document.getElementById('input').on('submit', function(e) {
       e.preventDefault();
       
-      console.log(document.getElementById('message').value);
-      socket.emit('message-sent', document.getElementById('message').value);
-      document.getElementById('message').value = '';
-      
-      return false;
+      var msg = document.getElementById('message').value;
+      if (msg !== '') {
+        //console.log(document.getElementById('message').value);
+        socket.emit('message-sent', msg);
+        document.getElementById('message').value = '';
+        
+        return false;
+      }
     });
     
+
+    var initialScroll = document.body.scrollHeight; 
     socket.on('message-received', function(user, msg) {
       $('#messages').append($('<li>').text('[' + user + ']: ' + msg));
       //document.getElementById('messages').innerHTML += '<li>' + msg + '</li>';
       
-      window.scrollTo(0,document.body.scrollHeight);
+      var curScroll = (document.documentElement.scrollTop || window.pageYOffset) + initialScroll;
+      if (curScroll >= document.body.scrollHeight - 100)
+        window.scrollTo(0, document.body.scrollHeight);
     });
     
     socket.on('update', function(update) {
       $('#messages').append($('<li>').text(update));
       //document.getElementById('messages').innerHTML += '<li>User disconnected</li>';
+
+      var curScroll = (document.documentElement.scrollTop || window.pageYOffset) + initialScroll;
+      if (curScroll >= document.body.scrollHeight - 100)
+        window.scrollTo(0, document.body.scrollHeight);
     });
