@@ -47,7 +47,7 @@ block content
       e.preventDefault();
       
       var msg = document.getElementById('message').value;
-      if (msg !== '') {
+      if (/\S/.test(msg)) {
         //console.log(document.getElementById('message').value);
         socket.emit('message-sent', msg);
         document.getElementById('message').value = '';
