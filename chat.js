@@ -18,6 +18,8 @@ module.exports = function(server) {
       people[socketId] = username;
       socket.emit('update', "You have successfully joined the chat room.");
       socket.broadcast.emit('update', username + " has joined the chat room.");
+
+      io.sockets.emit('new-person', people);
     });
 
     socket.on('message-sent', function(msg) {

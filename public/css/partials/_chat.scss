@@ -2,7 +2,7 @@ body {
   padding-bottom: 70px;
 }
 
-#input {
+#message-form {
   width: 100%;
   position: fixed;
   bottom: 0;
@@ -11,9 +11,10 @@ body {
 
   background-color: $silver;
 
-  input {
+  textarea {
     width: 90%;
 
+    resize: none;
     font-size: 20px;
 
     background-color: transparent;
@@ -44,17 +45,19 @@ body {
   }
 }
 
-#messages {
+#messages ul {
   margin: 0;
   padding: 0;
 
   list-style-type: none;
 }
 
-#messages li {
+#messages ul li {
   padding: 5px 10px;
+
+  word-break: break-all;
 }
 
-#messages li:nth-child(odd) {
+#messages ul li:nth-child(odd) {
   background: #eee;
 }
