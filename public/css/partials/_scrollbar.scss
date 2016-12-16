@@ -1,0 +1,17 @@
+.uiScrollableY {
+  position: relative;
+}
+
+.uiScrollableYTrack {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  top: 2px;
+  z-index: 10;
+
+  display: block;
+
+  width: 7px;
+
+  pointer-events: none;
+}

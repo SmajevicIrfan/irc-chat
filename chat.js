@@ -11,6 +11,8 @@ module.exports = function(server) {
     //console.log('New connection from ' + clientIp);
     //console.log(socketId);
 
+    socket.emit('new-person', people);
+
     socket.on('joined', function(username) {
       //DEBUG
       //console.log(clientIp + " is now known as " + username);
@@ -19,7 +21,7 @@ module.exports = function(server) {
       socket.emit('update', "You have successfully joined the chat room.");
       socket.broadcast.emit('update', username + " has joined the chat room.");
 
-      io.sockets.emit('new-person', people);
+      io.sockets.emit('new-person', username);
     });
 
     socket.on('message-sent', function(msg) {

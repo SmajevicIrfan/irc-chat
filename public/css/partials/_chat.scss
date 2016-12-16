@@ -1,63 +1,93 @@
 body {
-  padding-bottom: 70px;
+  display: flex;
+  overflow: hidden;
+}
+
+#channel-data {
+  flex-basis: 40%;
+
+  min-width: 240px;
+  max-width: 340px;
+  height: 100%;
+
+  background-color: $primary-color;
+}
+
+#messaging {
+  position: relative;
+
+  width: 100%;
+  max-height: 100%;
+}
+
+#messages {
+  position: absolute;
+  bottom: 70px;
+
+  width: 100%;
+  max-height: calc(100% - 70px);
+
+  overflow: hidden;
+
+  li {
+    padding: 5px 10px;
+
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  li:nth-child(odd) {
+    background: #eee;
+  }
 }
 
 #message-form {
-  width: 100%;
-  position: fixed;
+  position: absolute;
+  right: 0;
   bottom: 0;
+  left: 0;
 
   padding: 20px 30px;
 
-  background-color: $silver;
+  background-color: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
 
-  textarea {
-    width: 90%;
+#message-input {
+  width: 90%;
 
-    resize: none;
-    font-size: 20px;
+  resize: none;
+  overflow-x: hidden;
 
-    background-color: transparent;
-    border: none;
+  font-size: 1rem;
+  line-height: 1.2rem;
 
-    &:focus {
-      outline: none;
-    }
+  border: none;
+
+  &:focus {
+    outline: none;
   }
 }
 
 #send {
   float: right;
 
-  width: 30px;
-  height: 30px;
+  height: 1rem;
   padding: 0;
 
-  color: rgba($white, 0.95);
+  text-transform: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: inherit;
+  color: lighten($primary-color, 30%);
 
-  background-color: $primary-color;
+  background: none;
   border: none;
-  border-radius: 50%;
 
-  i {
-    position: relative;
-    top: -0.25em;
+  transition: color 0.1s ease-out 0s;
+
+  &:hover {
+    color: lighten($primary-color, 15%);
   }
-}
-
-#messages ul {
-  margin: 0;
-  padding: 0;
-
-  list-style-type: none;
-}
-
-#messages ul li {
-  padding: 5px 10px;
-
-  word-break: break-all;
-}
-
-#messages ul li:nth-child(odd) {
-  background: #eee;
 }

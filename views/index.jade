@@ -1,30 +1,48 @@
 extends layout
 
+block additional
+  link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.15/css/perfect-scrollbar.min.css")
+
 block content
   // prompt
   #overlay
     #username-prompt
+      h4 Tell us what you want to be called
+      h5.alert(style="display: none;") Username can only consist of lowercase and uppercase letters, numbers, '.', '_' and '-' characters
+      
       form(action="")
-        h4 Tell us what you want to be called
         input(id="username-input", autocomplete="off", placeholder="Username")
         button Set
   
   // chat
-  #people
+  #channel-data
+    #channel-heading
+      h1= title
+      span#username-display username
+      
+    #online-list-section.section.no-margin-bottom
+      h2#online-list-header.channel-header People
+        span.header-count
+      ul#online-list.list
+    
   
   #messaging
     // TODO add calling ribbon
     
-    #messages
-      ul
+    #messages.uiScrollableY
+      .uiScrollableYTrack
+        .uiScrollableYGripper
+      #messages-content.uiScrollableYContent
+        ul
     
     // TODO figure out where to put emojis
     #message-form
       // TODO add insertion for files
       
       form(action="")
-        textarea(id="message-input", autocomplete="off", autocorrect="on", spellcheck="true", placeholder="Message...", rows="1")
-        button#send <i class="fa fa-paper-plane" aria-hidden="true"></i>
+        textarea(id="message-input", type="text", autocomplete="off", autocorrect="on", spellcheck="true", placeholder="Message...", rows="1", aria-autocomplete="both")
+        button(id="send", type="submit") Send
         
-  
+  //script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.15/js/perfect-scrollbar.min.js")
+  //script(src="https://raw.githubusercontent.com/jamesflorentino/nanoScrollerJS/master/bin/javascripts/jquery.nanoscroller.min.js")
   script(src="/js/chat-frontend.js")
