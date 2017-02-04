@@ -30,6 +30,8 @@ body {
   overflow: auto;
 
   li {
+    position: relative;
+
     padding: 5px 10px;
 
     word-wrap: break-word;
@@ -39,6 +41,17 @@ body {
   li:nth-child(odd) {
     background: #eee;
   }
+}
+
+.time {
+  display: inline-block;
+
+  float: right;
+
+  width: 5%;
+  min-width: 36px;
+
+  word-break: keep-all;
 }
 
 #message-form {
