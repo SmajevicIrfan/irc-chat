@@ -1,6 +1,6 @@
 {
   "name": "irc-chat",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -15,16 +15,17 @@
   "author": "Irfan Smajevic",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "~1.13.2",
-    "cookie-parser": "~1.3.5",
-    "cookie-session": "^1.2.0",
-    "debug": "~2.2.0",
-    "express": "~4.13.1",
-    "jade": "~1.11.0",
-    "morgan": "~1.6.1",
-    "node-sass-middleware": "0.8.0",
-    "passport": "^0.3.2",
-    "serve-favicon": "~2.3.0",
-    "socket.io": "^1.4.8"
+    "bcrypt": "^1.0.1",
+    "body-parser": "^1.13.3",
+    "cookie-parser": "^1.3.5",
+    "cookies": "^0.6.2",
+    "debug": "^2.2.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.7.3",
+    "morgan": "^1.6.1",
+    "node-sass-middleware": "^0.8.0",
+    "pug": "^2.0.0-beta6",
+    "serve-favicon": "^2.3.2",
+    "socket.io": "^1.7.2"
   }
 }

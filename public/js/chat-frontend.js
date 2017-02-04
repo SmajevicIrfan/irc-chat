@@ -11,6 +11,11 @@ else {
     };
 }
 
+// Remove from DOM
+Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+}
+
 // Sort function
 function compare(a, b) {
   if (a.toLowerCase() < b.toLowerCase())
@@ -18,6 +23,8 @@ function compare(a, b) {
 
   return 1;
 }
+
+var Cookie = (window && typeof window.document === 'object') ? factory(window) : factory;
 
 (function() {
   // Connecting to socket
@@ -33,24 +40,52 @@ function compare(a, b) {
   var messages = document.getElementById('messages');
 
   // Focus on prompt
-  document.getElementById('username-input').focus();
+  document.getElementById('username').focus();
   // Set fixed prompt length
   document.getElementById('username-prompt').style.width = document.getElementById('username-prompt').offsetWidth+'px';
+
+  // Private chat
+  if (document.getElementById('admin-login') == null)
+    document.getElementById('password').style.display = "initial";
+
+  // Admin login
+  observe(document.querySelector('#admin-login a'), 'click', function(e) {
+    e.preventDefault();
+
+    document.getElementById('admin-login').style.display = "none";
+    document.getElementById('password').style.display = "initial";
+  });
 
   // Submit username
   observe(document.querySelector('#username-prompt form'), 'submit', function(e) {
     e.preventDefault();
 
     var validation = /^\w[a-zA-Z0-9.\-_]{3,15}$/g;
-    var username = document.getElementById('username-input').value;
+    var username = document.getElementById('username').value;
 
     if (validation.test(username) && document.getElementById('user_' + username.toLowerCase()) == null) {
-      socket.emit('joined', username);
-      document.getElementById('overlay').style.display = "none";
-      document.getElementById('message-input').focus();
+      var http = new XMLHttpRequest();
+      http.open('POST', window.location.href, true);
+      http.setRequestHeader('Content-type','application/x-www-form-urlencoded');
 
-      document.getElementById('username-display').innerHTML = username;
-      document.getElementById('username-display').style.visibility = "visible";
+      var params = 'username=' + username + '&password=' + document.getElementById('password').value;
+
+      http.send(params);
+
+      http.onload = function() {
+        if (this.status === 200) {
+          Cookie.set('user_id', this.responseText);
+
+          document.getElementById('overlay').style.display = "none";
+          document.getElementById('message-input').focus();
+
+          document.getElementById('username-display').innerHTML = username;
+          document.getElementById('username-display').style.visibility = "visible";
+        }
+        else {
+          // TODO Handle this
+        }
+      }
     }
     else {
       document.querySelector('#username-prompt .alert').style.display = "initial";
@@ -92,7 +127,10 @@ function compare(a, b) {
   function submitMsg() {
     var msg = document.getElementById('message-input').value;
     if (/\S/.test(msg)) {
-      socket.emit('message-sent', msg);
+      var room = window.location.pathname.split('/')[2];
+      console.log(room);
+
+      socket.emit('message-sent', room, msg);
       document.getElementById('message-input').value = '';
 
       if (!isMobile)
@@ -118,11 +156,23 @@ function compare(a, b) {
     return false;
   });
 
+  /**
+   * Sockets - Receive
+   */
+
   function addMsg(msg) {
-    var newMsg = document.createElement("LI");
+    var newMsg = document.createElement('li');
     var msgText = document.createTextNode(msg);
 
+    var timeStamp = document.createElement('div');
+    timeStamp.className = 'time';
+
+    var d = new Date();
+    var time = document.createTextNode(d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes());
+    timeStamp.appendChild(time);
+
     newMsg.appendChild(msgText);
+    newMsg.appendChild(timeStamp);
     messages.querySelector('ul').appendChild(newMsg);
   }
 
@@ -134,8 +184,10 @@ function compare(a, b) {
   }
 
   // Receiving info from server
-  socket.on('message-received', function(user, msg) {
-    addMsg('[' + user + ']: ' + msg);
+  socket.on('message-received', function(user, room, msg) {
+    if (room)
+      addMsg('[' + user + ']: ' + msg);
+
     scrollToBottom();
   });
 
@@ -144,47 +196,44 @@ function compare(a, b) {
     scrollToBottom();
   });
 
-  socket.on('new-person', function(users) {
-    if (typeof users === 'string') {
-      var inserted = false;
-      var list = document.getElementById('online-list').childNodes;
+  socket.on('connected', function(users) {
+    users.sort(compare);
 
-      [].forEach.call(list, function(user_element) {
-        if (user_element.innerHTML.toLowerCase() > users.toLowerCase() && !inserted) {
-          var newUser = document.createElement("LI");
-          newUser.id = "user_" + users.toLowerCase();
+    users.forEach(function(user) {
+      var newUser = document.createElement("LI");
+      newUser.id = "user_" + user.toLowerCase();
 
-          newUser.appendChild(document.createTextNode(users));
-          document.getElementById('online-list').insertBefore(newUser, user_element);
+      newUser.appendChild(document.createTextNode(user));
+      document.getElementById('online-list').appendChild(newUser);
+    });
+  });
 
-          inserted = true;
-        }
-      });
+  socket.on('new-user', function(user) {
+    var inserted = false;
+    var list = document.getElementById('online-list').childNodes;
 
-      if (!inserted) {
-        var newUser = document.createElement("LI");
-        newUser.id = "user_" + users.toLowerCase();
-
-        newUser.appendChild(document.createTextNode(users));
-        document.getElementById('online-list').appendChild(newUser);
-      }
-    }
-    else {
-      var people = [];
-      for (var socketId in users)
-        if (users.hasOwnProperty(socketId))
-          people.push(users[socketId]);
-
-      people.sort(compare);
-      console.log(people);
-
-      people.forEach(function(user) {
+    [].forEach.call(list, function(user_element) {
+      if (user_element.innerHTML.toLowerCase() > user.toLowerCase() && !inserted) {
         var newUser = document.createElement("LI");
         newUser.id = "user_" + user.toLowerCase();
 
         newUser.appendChild(document.createTextNode(user));
-        document.getElementById('online-list').appendChild(newUser);
-      });
+        document.getElementById('online-list').insertBefore(newUser, user_element);
+
+        inserted = true;
+      }
+    });
+
+    if (!inserted) {
+      var newUser = document.createElement("LI");
+      newUser.id = "user_" + user.toLowerCase();
+
+      newUser.appendChild(document.createTextNode(user));
+      document.getElementById('online-list').appendChild(newUser);
     }
+  });
+
+  socket.on('user-left', function(user) {
+    document.getElementById('user_' + user.toLowerCase()).remove();
   });
 })();

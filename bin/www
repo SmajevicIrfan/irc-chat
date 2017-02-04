@@ -5,6 +5,9 @@
  */
 
 var app = require('../app');
+var server = app.server;
+app = app.app;
+
 var debug = require('debug')('irc-chat:server');
 var http = require('http');
 
@@ -16,19 +19,10 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-const chat = require('../chat.js')(server);
-
-/**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port, '0.0.0.0', function()
-{
+server.listen(port, function() {
   console.log('Server listening on port: ' + port + '. If not, an error occured.');
 });
 server.on('error', onError);

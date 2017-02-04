@@ -2,35 +2,43 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var http = require('http');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('cookie-session');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+// Database
+var mongoCLI = require('./config/mongo-client.js');
 
 var app = express();
 
+/**
+ * Create HTTP server.
+ */
+var server = http.createServer(app);
+
+/**
+ * Set up sockets
+ */
+var io = require('socket.io').listen(server);
+//var chat = require('./chat')(io);
+app.set('socketio', io);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // All environments
 var sessionSecret = process.env.SESSION_SECRET ||
 					'thesalviansunwashittinghereyessothatshelookedthemostbeautifullever';
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({
-  name: 'session',
-  secret: sessionSecret,
 
-  maxAge: 24 * 60 * 60 * 1000
-}));
 app.use(require('node-sass-middleware')({
   src: __dirname + '/public',
   dest: __dirname + '/public',
@@ -39,8 +47,14 @@ app.use(require('node-sass-middleware')({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+/**
+ * Routing
+ */
+var routes = require('./routes/index');
+var chat = require('./chatApp')(io);
+
 app.use('/', routes);
-app.use('/users', users);
+app.use('/chat', chat.router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -73,4 +87,9 @@ app.use(function(err, req, res, next) {
   });
 });
 
-module.exports = app;
+/**
+ * Exporting for bin/www
+ */
+
+module.exports.app = app;
+module.exports.server = server;
