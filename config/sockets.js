@@ -4,22 +4,18 @@ module.exports = function(io) {
   // List of active users in every room
   var usersInRoom = {};
 
-  var _socket, userId;
-  var _room;
+  var chatApp = function(socketId) {
+    _socket = io.sockets.connected[socketId];
 
-  var chatApp = function() {
     this.update = function(msg) {
       _socket.emit('update', msg);
     }
 
-    this.join = function(room, newUserID, username, isAdmin) {
-      userId = newUserID;
-      _room = room;
-
+    this.join = function(room, username, isAdmin) {
       if (!usersInRoom[room])
         usersInRoom[room] = {};
 
-      usersInRoom[room][userId] = username;
+      usersInRoom[room][socketId] = username;
 
       _socket.join(room);
 
@@ -30,8 +26,8 @@ module.exports = function(io) {
         _socket.broadcast.in(room).emit('update', username + " has joined the chat room.");
 
       var activeUsers = new Array;
-      for(var user in usersInRoom[room]) {
-          activeUsers.push(usersInRoom[room][user]);
+      for(var socket in usersInRoom[room]) {
+          activeUsers.push(usersInRoom[room][socket]);
       }
 
       _socket.broadcast.in(room).emit('new-user', username);
@@ -41,19 +37,29 @@ module.exports = function(io) {
 
   io.sockets.on('connection', function (socket) {
     var socketId = socket.id;
-    _socket = socket;
 
     socket.on('message-sent', function(room, msg) {
-      io.in(room).emit('message-received', usersInRoom[room][userId], room, msg);
+      io.in(room).emit('message-received', usersInRoom[room][socketId], room, msg);
     });
 
     socket.on('disconnect', function() {
-      socket.broadcast.in(_room).emit('update', usersInRoom[_room][userId] + " has left the chat room.");
-      socket.emit('update', "You have been disconnected! Please refresh.");
+      var rooms = socket.rooms;
+      if (rooms == undefined)
+        return ;
 
-      io.sockets.emit('user-left', usersInRoom[_room][userId]);
+      var p = true;
+      for(var room in rooms) {
+        if (p) {
+          p = false;
+          continue;
+        }
+        
+        socket.broadcast.in(room).emit('update', usersInRoom[room][socketId] + " has left the chat room.");
 
-      delete usersInRoom[_room][userId];
+        io.sockets.emit('user-left', usersInRoom[room][socketId]);
+
+        delete usersInRoom[room][socketId];
+      }
     });
   });
 

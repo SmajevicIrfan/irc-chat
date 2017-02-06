@@ -17,7 +17,6 @@ function generateHash(len) {
 
 module.exports = function(io) {
   var sockets = require('./config/sockets')(io);
-  var chatApp = new sockets();
 
   /**
    * Redirect to General chatroom
@@ -53,6 +52,9 @@ module.exports = function(io) {
     var username = req.body.username;
     var password = req.body.password;
 
+    var socketId = req.cookies.io;
+    var chatApp = new sockets(socketId);
+
     Channels.findOne({ 'publicID': req.params.id }, function(err, chatRoom) {
       if (err) {
         console.error(err);
@@ -65,8 +67,6 @@ module.exports = function(io) {
         next(error);
       }
       else {
-        var userID = generateHash(32);
-
         if (chatRoom.isPrivate) {
           var validation = chatRoom.validatePassword(password);
 
@@ -77,12 +77,12 @@ module.exports = function(io) {
           else {
             if (validation === 2) {
               // Admin
-              chatApp.update(null, 'You authenticated as an admin.');
-              chatApp.join(req.params.id, userID, username, true);
+              chatApp.update('You authenticated as an admin.');
+              chatApp.join(req.params.id, username, true);
             }
             else {
               // Normal User
-              chatApp.join(req.params.id, userID, username, false);
+              chatApp.join(req.params.id, username, false);
             }
           }
         }
@@ -91,27 +91,26 @@ module.exports = function(io) {
             if (chatRoom.validatePassword(password) === 2) {
               // Admin
               chatApp.update('You authenticated as an admin.');
-              chatApp.join(req.params.id, userID, username, true);
+              chatApp.join(req.params.id, username, true);
             }
             else {
               // Failed to join as admin
               chatApp.update('You have failed to authenticate as an admin.');
-              chatApp.join(req.params.id, userID, username, false);
+              chatApp.join(req.params.id, username, false);
             }
           }
           else {
             // Normal User
-            chatApp.join(req.params.id, userID, username, false);
+            chatApp.join(req.params.id, username, false);
           }
         }
       }
 
-      res.status(200).send(userID);
+      res.status(200).send("OK");
     });
   });
 
   return {
-    router: router,
-    sockets: chatApp
+    router: router
   };
 }

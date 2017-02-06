@@ -74,7 +74,7 @@ var Cookie = (window && typeof window.document === 'object') ? factory(window) :
 
       http.onload = function() {
         if (this.status === 200) {
-          Cookie.set('user_id', this.responseText);
+          //Cookie.set('user_id', this.responseText);
 
           document.getElementById('overlay').style.display = "none";
           document.getElementById('message-input').focus();
