@@ -10,7 +10,7 @@ block content
     #username-prompt
       h4 Tell us what you want to be called
       h5.alert(style="display: none;") Username can only consist of lowercase and uppercase letters, numbers, '.', '_' and '-' characters
-      
+
       form(action="")
         input(id="username", autocomplete="off", placeholder="Username")
         if isPrivate == false
@@ -18,35 +18,35 @@ block content
             a(href="") I am an admin...
         input(id="password", type="password", placeholder="Password", style="display: none")
         button Set
-  
+
   // chat
   #channel-data
     #channel-heading
       h1#title= title
       span#username-display username
-      
+
     #online-list-section.section.no-margin-bottom
       h2#online-list-header.channel-header People
         span.header-count
       ul#online-list.list
-    
-  
+
+
   #messaging
     // TODO add calling ribbon
-    
+
     #messages.uiScrollableY
       .uiScrollableYTrack
         .uiScrollableYGripper
       #messages-content.uiScrollableYContent
         ul
-    
+
     // TODO figure out where to put emojis
     #message-form
       // TODO add insertion for files
-      
+
       form(action="")
         textarea(id="message-input", type="text", autocomplete="off", autocorrect="on", spellcheck="true", placeholder="Message...", rows="1", aria-autocomplete="both")
         button(id="send", type="submit") Send
-        
+
   script(src="/js/cookies.js")
   script(src="/js/chat-frontend.js")

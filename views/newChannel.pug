@@ -1,0 +1,71 @@
+extends layout
+
+block additional
+  link(rel="stylesheet", href="/css/style.css")
+  link(href="https://fonts.googleapis.com/icon?family=Material+Icons", rel="stylesheet")
+
+  style.
+    body { background-color: #F8F8F8; }
+
+block content
+  .wrapper
+    .card.w50.center
+      .section-title.divider
+        h2
+          span Create new chat room
+
+      //TODO Add this
+      if message.length > 0
+        .alert.alert-warning= message
+
+      form(method='post')
+        .form-field
+          label.break(for='name') Name
+          input(id='name', name='name', type='text', placeholder='Name')
+
+        .form-field
+          label.break(for='adminPassword') Password for admins
+          input(id='adminPassword', name='adminPassword', type='password', placeholder='Admin password')
+
+        .form-field
+          input.filled-in(id='isLogged', name='isLogged', type='checkbox')
+          label(for='isLogged') Log the chat (NOT IMPLEMENTED YET!)
+
+        .form-field
+          input.filled-in(id='isPrivate', name='isPrivate', type='checkbox', onclick="togglePrivate()")
+          label(for='isPrivate') Make the chat private
+
+        #onlyPrivate(style="display: none;")
+          .form-field
+            label.break(for='password') Password for regular users
+            input(id='password', name='password', type='password', placeholder='Password')
+
+        button.primary(type='submit') Create
+
+        script.
+          function togglePrivate() {
+            if (document.getElementById('onlyPrivate').style.display == "none")
+              document.getElementById('onlyPrivate').style.display = "initial";
+            else
+              document.getElementById('onlyPrivate').style.display = "none";
+          }
+
+          // Event Listener
+          var observe;
+          if (window.attachEvent) {
+              observe = function (element, event, handler) {
+                  element.attachEvent('on'+event, handler);
+              };
+          }
+          else {
+              observe = function (element, event, handler) {
+                  element.addEventListener(event, handler, false);
+              };
+          }
+
+          var checkboxes = document.querySelector("input[type='checkbox']+ label");
+          for (var i = 0, max = checkboxes.length; i < max; i++) {
+            observe(checkboxes[i], 'click', function() {
+              checkboxes[i].parentNode.querySelector("input[type='checkbox']").checked = checkboxes[i].parentNode.querySelector("input[type='checkbox']").checked ? false : true;
+            });
+          }

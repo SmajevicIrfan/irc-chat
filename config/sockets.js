@@ -20,10 +20,7 @@ module.exports = function(io) {
       _socket.join(room);
 
       _socket.emit('update', "You have successfully joined the chat room '" + room + "'.");
-      if (isAdmin)
-        _socket.broadcast.in(room).emit('update', "Admin " + username + " has joined the chat room.");
-      else
-        _socket.broadcast.in(room).emit('update', username + " has joined the chat room.");
+      _socket.broadcast.in(room).emit('update', (isAdmin ? "Admin " : "") + username + " has joined the chat room.");
 
       var activeUsers = new Array;
       for(var socket in usersInRoom[room]) {
@@ -53,7 +50,7 @@ module.exports = function(io) {
           p = false;
           continue;
         }
-        
+
         socket.broadcast.in(room).emit('update', usersInRoom[room][socketId] + " has left the chat room.");
 
         io.sockets.emit('user-left', usersInRoom[room][socketId]);

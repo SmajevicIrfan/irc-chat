@@ -41,7 +41,7 @@ module.exports = function(io) {
         next(error);
       }
       else
-        res.render('chatroom', { 'title': chatRoom.name, 'isPrivate': chatRoom.isPrivate });
+        res.render('chatroom', { 'title': chatRoom.name.replace(/\b\w/g, function(l) { return l.toUpperCase() }), 'isPrivate': chatRoom.isPrivate });
     });
   });
 
@@ -49,6 +49,7 @@ module.exports = function(io) {
    * Logging in user
    */
   router.post('/:id', function(req, res, next) {
+    console.log("post");
     var username = req.body.username;
     var password = req.body.password;
 
@@ -106,6 +107,7 @@ module.exports = function(io) {
         }
       }
 
+      delete chatApp;
       res.status(200).send("OK");
     });
   });

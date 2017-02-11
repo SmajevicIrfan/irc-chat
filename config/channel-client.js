@@ -14,35 +14,13 @@ var Channel = new Schema({
   passwordAdmin : { type: String, required: true }
 });
 
-Channel.methods.addChannel = function(name, logged, private, password, passwordAdmin, next) {
-  var newChannel = new Channel();
-
-  newChannel.name = this.name.toLowerCase();
-  if (this.logged)
-    newChannel.logged = this.logged;
-
-  if (this.private) {
-    newChannel.private = this.private;
-
-    bcrypt.hash(this.password, saltRounds).then(function(hash) {
-      newChannel.password = hash;
-    });
-  }
-
-  bcrypt.hash(this.passwordAdmin, saltRounds).then(function(hash) {
-    newChannel.passwordAdmin = hash;
-  });
-
-  newChannel.save(function(err) {
-    if (err)
-      return next(err);
-
-    return next(null, newChannel);
+Channel.methods.generateHash = function(password) {
+  bcrypt.hash(password, saltRounds).then(function(hash) {
+    this.password = hash;
   });
 }
 
 Channel.methods.validatePassword = function(_password) {
-  console.log(this.name, this.isLogged);
   if (this.password != undefined) {
     if (bcrypt.compareSync(_password, this.password))
       return 1;

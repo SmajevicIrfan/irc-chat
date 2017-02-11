@@ -1,4 +1,20 @@
 extends layout
 
+block additional
+  link(rel="stylesheet", href="/css/style.css")
+
 block content
-  p Ja barem radim xD
+  .wrapper
+    #existingchat
+      h3.title Join an existing chat room
+      hr/
+      ul#rooms.list
+        each chatroom in chat
+          li
+            a.selection(href=`/chat/${chatroom.publicID}`)= chatroom.name
+
+    #newchat
+      h3.title Create a new chat room
+      hr/
+      p Want to have your own chat room for you and your friends?
+      a.selection(href="/chat/new")#create-room Create

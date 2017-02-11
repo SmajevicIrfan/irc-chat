@@ -15,13 +15,13 @@
 
 // Partials(Common modules on pages)
 @import 'partials/flex-video';
-@import 'partials/name-lockup';
-@import 'partials/grid';
 @import 'partials/scrollbar';
+@import 'partials/cards';
+@import 'partials/user-form';
 
 // Pages
-@import "partials/chat";
+//@import 'partials/index';
+//@import "partials/chat";
 
-@import 'partials/user-form';
-@import 'partials/overlay';
-@import 'partials/people';
+//@import 'partials/overlay';
+//@import 'partials/people';

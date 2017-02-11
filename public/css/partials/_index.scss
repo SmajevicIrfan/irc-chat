@@ -1,0 +1,67 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+
+  background: $white;
+}
+
+#existingchat,
+#newchat {
+  width: 47%;
+
+  margin: 10% 3%;
+  padding: 0 3%;
+
+  background: white;
+
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12),
+              0 1px 2px rgba(0,0,0,0.24);
+
+  .selection {
+    display: block;
+
+    max-width: 100%;
+
+    padding: 0.5rem 0.5rem;
+
+    text-align: center;
+    color: black;
+
+    background-color: white;
+    cursor: pointer;
+
+    border-radius: 2px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.12),
+                0 1px 2px rgba(0,0,0,0.24);
+
+    transition: box-shadow 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 3px 5px 15px rgba(0,0,0,0.12),
+                  0 5px 10px rgba(0,0,0,0.24);
+    }
+  }
+}
+
+.center {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#rooms {
+  //height: calc(100% - 127px);
+
+  padding: 0.25rem 0.5rem;
+
+  /*background-color: $white;
+
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12) inset,
+              0 1px 2px rgba(0,0,0,0.24) inset;*/
+
+  li {
+    margin: 0.5rem 0;
+    padding: 0;
+  }
+}
